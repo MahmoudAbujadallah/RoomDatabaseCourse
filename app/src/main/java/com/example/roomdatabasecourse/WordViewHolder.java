@@ -7,10 +7,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-class WordViewHolder extends RecyclerView.ViewHolder{
+public class WordViewHolder extends RecyclerView.ViewHolder{
     private final TextView wordItemView;
 
-    private WordViewHolder(View itemView) {
+    public WordViewHolder(View itemView) {
         super(itemView);
         wordItemView = itemView.findViewById(R.id.textView);
     }
