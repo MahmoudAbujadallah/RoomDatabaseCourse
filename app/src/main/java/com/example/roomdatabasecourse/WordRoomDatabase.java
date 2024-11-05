@@ -1,10 +1,14 @@
 package com.example.roomdatabasecourse;
 
+import static androidx.activity.OnBackPressedDispatcherKt.addCallback;
+
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +31,9 @@ public abstract class WordRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null){
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             WordRoomDatabase.class, "word_database")
+                            .addCallback(roomCallback)
                             .build();
+
                 }
             }
         }
@@ -35,7 +41,23 @@ public abstract class WordRoomDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+    private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
 
 
+            databaseWriteExecutor.execute(() -> {
 
+                WordDao dao = INSTANCE.wordDao();
+                dao.deleteAll();
+
+                Word word = new Word("Hello");
+                dao.insert(word);
+                word = new Word("Mahmoud");
+                dao.insert(word);
+
+            });
+        }
+    };
 }
